@@ -1,12 +1,12 @@
 class SimplexSolver():
-    def __init__(self) -> None:
-        self.A = None
-        self.b = None
-        self.c = None
-        self.num_constraints = 0
-        self.num_variables = 0
+    def __init__(self, A, b, c) -> None:
+        self.A = A
+        self.b = b
+        self.c = c
+        self.num_constraints = len(A)
+        self.num_variables = len(A[0])
 
-        self.tableau = None
+        self.tableau = self.get_tableau()
 
     def get_tableau(self):
         tableau = []
@@ -50,14 +50,7 @@ class SimplexSolver():
             for j in range(self.num_variables + self.num_constraints + 2):
                 self.tableau[i][j] -= ratio * self.tableau[pivot_row][j]
 
-    def solve(self, A, b, c):
-        self.A = A
-        self.b = b
-        self.c = c
-        self.num_constraints = len(A)
-        self.num_variables = len(A[0])
-        self.tableau = self.get_tableau()
-
+    def solve(self):
         while True:
             pivot_col = self.find_pivot_col()
             if pivot_col is None:
@@ -66,10 +59,12 @@ class SimplexSolver():
             pivot_element = self.tableau[pivot_row][pivot_col]
             self.update_pivot_row(pivot_row, pivot_element)
             self.update_other_rows(pivot_row, pivot_col)
-        print(self.tableau[-1][-1])
+        
+        return self.tableau[-1][-1]
 
-ss = SimplexSolver()
 A = [[1, 3, 2], [1, 5, 1]]
 b = [10, 8]
 c = [8, 10, 7]
-ss.solve(A, b, c)
+ss = SimplexSolver(A, b, c)
+res = ss.solve()
+print(res)
